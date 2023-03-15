@@ -1,0 +1,5 @@
+spotify_artists.form:
+  title: 'Spotify artists settings'
+  description: 'Configure settings for the custom module.'
+  route_name: spotify_artists.form_artists
+  parent: 'system.admin_content'

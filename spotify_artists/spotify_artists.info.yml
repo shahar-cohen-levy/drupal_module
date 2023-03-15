@@ -1,0 +1,7 @@
+name: Spotify artists Module
+description: connects to the Spotify API.
+package: Custom
+type: module
+core_version_requirement: ^9 || ^10
+dependencies:
+  - twig_tweak:twig_tweak

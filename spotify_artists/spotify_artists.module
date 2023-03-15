@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Contains spotify_artists.module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function spotify_artists_theme() {
+
+  return [
+    'spotify_artists_block' => [
+      'variables' => [
+        'artists' => [],
+      ],
+    ],
+    'spotify_artists_page' => [
+      'variables' => [
+        'artist_from_url' => NULL,
+        'artist' => NULL,
+      ],
+    ],
+  ];
+}

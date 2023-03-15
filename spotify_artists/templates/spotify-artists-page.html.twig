@@ -1,0 +1,28 @@
+<div>
+  {% if artist %}
+    <h1> {{artist.name}} </h1>
+    <div>
+      <img
+        src="{{ artist.images[0].url }}"
+        height="{{ artist.images[0].height }}"
+        width="{{ artist.images[0].width }}"
+      >
+    </div>
+    <ul>
+      {% for genre in artist.genres %}
+        <li>{{ genre }}</li>
+      {% endfor %}
+    </ul>
+{% else %}
+
+  {%  if (drupal_block('spotify_artists_block')['content']['#artists'] == NULL) %}
+      <h2>{{ 'Oops no artist info, check settings.'|t }}</h2>
+  {% else %}
+      <h2>{{ 'Oops no artist info, try selecting one from this list:'|t }}</h2>
+      {{ drupal_block('spotify_artists_block') }}
+  {% endif %}
+
+{% endif %}
+
+</div>
+

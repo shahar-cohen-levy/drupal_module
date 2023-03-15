@@ -1,0 +1,10 @@
+spotify_artists.form_artists:
+  route_name: spotify_artists.form_artists
+  title: 'Artists'
+  base_route: spotify_artists.form_artists
+  weight: 0
+spotify_artists.form_api:
+  route_name: spotify_artists.form_api
+  title: 'API Settings'
+  base_route: spotify_artists.form_artists
+  weight: 5

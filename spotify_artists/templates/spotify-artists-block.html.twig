@@ -1,0 +1,19 @@
+{% if artists %}
+<ul>
+  {% for artist in artists %}
+    <li>
+      {% if logged_in %}
+        <a href="/spotify_artist/{{ artist.id }}">
+      {% endif %}
+      {{ artist.name }}
+      {% if logged_in %}
+        </a>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div>
+  {{ 'No artist found, please add in config'|t }}
+</div>
+{% endif %}

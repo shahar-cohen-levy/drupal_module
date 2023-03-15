@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - spotify_artists
+  theme:
+    - olivero
+id: artistsblock
+theme: olivero
+region: header
+weight: -6
+provider: null
+plugin: spotify_artists_block
+settings:
+  id: spotify_artists_block
+  label: 'Artists block'
+  label_display: visible
+  provider: spotify_artists
+visibility: {  }

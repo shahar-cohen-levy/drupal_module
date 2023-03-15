@@ -1,0 +1,21 @@
+spotify_artists.api:
+  type: config_object
+  label: 'Spotify artists settings'
+  mapping:
+    client_id:
+      type: text
+      label: 'Client ID'
+    client_secret:
+      type: text
+      label: 'Client secret'
+
+spotify_artists.artists:
+  type: config_object
+  label: 'Spotify artists search results'
+  mapping:
+    ids:
+      type: sequence
+      label: 'List of IDs'
+      sequence:
+        type: string
+        label: 'ID'

@@ -1,0 +1,21 @@
+spotify_artists.content:
+  path: '/spotify_artist/{artist_id}'
+  defaults:
+    _controller: '\Drupal\spotify_artists\Controller\SpotifyArtistsController::buildPage'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+spotify_artists.form_api:
+  path: '/admin/config/content/spotify_api'
+  defaults:
+    _form: '\Drupal\spotify_artists\Form\ConfigFormAPI'
+    _title: 'Spotify API'
+  requirements:
+    _permission: 'administer site configuration'
+spotify_artists.form_artists:
+  path: '/admin/config/content/spotify_artists'
+  defaults:
+    _form: '\Drupal\spotify_artists\Form\ConfigFormArtists'
+    _title: 'Spotify artists'
+  requirements:
+    _permission: 'administer site configuration'
+
