@@ -16,6 +16,11 @@ function spotify_artists_theme() {
         'artists' => [],
       ],
     ],
+    'spotify_artists_field' => [
+      'variables' => [
+        'artist' => NULL,
+      ],
+    ],
     'spotify_artists_page' => [
       'variables' => [
         'artist_from_url' => NULL,

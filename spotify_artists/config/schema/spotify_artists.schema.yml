@@ -19,3 +19,14 @@ spotify_artists.artists:
       sequence:
         type: string
         label: 'ID'
+
+field.field_spotify_artist.value:
+  type: sequence
+  label: 'Default value'
+  sequence:
+    - type: mapping
+      label: 'Default'
+      mapping:
+        value:
+          type: string
+          label: 'Value'

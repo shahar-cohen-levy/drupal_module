@@ -17,6 +17,24 @@ class SearchArtistsService {
   protected string $token;
 
   /**
+   * Spotify API service.
+   *
+   * @var \Drupal\spotify_artists\SpotifyApiService
+   */
+  protected SpotifyApiService $spotifyApiService;
+
+  /**
+   * Constructor.
+   *
+   * @param \Drupal\spotify_artists\SpotifyApiService $spotifyApiService
+   *   spotify API service.
+   */
+  public function __construct(SpotifyApiService $spotifyApiService) {
+    $this->spotifyApiService = $spotifyApiService;
+    $this->token = $this->spotifyApiService->spotifyApiToken()->value;
+  }
+
+  /**
    * Search Artists.
    *
    * @return object
@@ -25,7 +43,7 @@ class SearchArtistsService {
    * @throws \GuzzleHttp\Exception\GuzzleException
    *   Error message.
    */
-  public function searchArtists($token, $query): object {
+  public function searchArtists($query): object {
 
     $client = new Client([
       'base_uri' => 'https://api.spotify.com',
@@ -34,7 +52,7 @@ class SearchArtistsService {
       $request = $client->request('GET', '/v1/search?',
         [
           'headers' => [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer ' . $this->token,
             'Content-Type' => 'application/json',
           ],
           'query' => [

@@ -1,0 +1,11 @@
+<div>
+    {% if artist %}
+    <h2> {{artist.name}} </h2>
+        <img
+                src="{{ artist.images[0].url }}"
+                height="{{ artist.images[0].height }}"
+                width="{{ artist.images[0].width }}"
+        >
+<div> Followers: {{ artist.followers.total }}</div>
+    {% endif %}
+</div>

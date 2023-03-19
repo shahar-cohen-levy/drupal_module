@@ -78,7 +78,7 @@ class ConfigFormArtists extends ConfigFormBase {
    *
    * @noinspection PhpParamsInspection
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): ConfigFormBase|ConfigFormArtists|static {
     return new static(
       $container->get('config.factory'),
       $container->get('spotify.api'),
@@ -150,52 +150,47 @@ class ConfigFormArtists extends ConfigFormBase {
       'artist_name' => $this->t('Name'),
       'artist_id' => $this->t('Id'),
     ];
-    // Get saved ids from config.
-    $ids_list = $this
-      ->config('spotify_artists.artists')
-      ->get('ids');
+
     // Get artists data from Spotify.
-    if ($this->token->status == 200 && !empty($ids_list)) {
-      $artists = $this->artistsService->getArtists($this->token->value, $ids_list);
-      // Create an array for the table.
-      $list = [];
-      if ($artists->status == 200) {
-        foreach ($artists->artists as $key => $artist) {
-          $list[$key] = [
-            'artist_name' => Markup::create('<a href="/spotify_artist/' . $artist->id . '">' . $artist->name . '</a>'),
-            'artist_id' => $artist->id,
+    $artists = $this->artistsService->getArtists();
+    // Create an array for the table.
+    $list = [];
+    if ($artists->status == 200) {
+      foreach ($artists->artists as $key => $artist) {
+        $list[$key] = [
+          'artist_name' => Markup::create('<a href="/spotify_artist/' . $artist->id . '">' . $artist->name . '</a>'),
+          'artist_id' => $artist->id,
 
-          ];
-        }
-
-        // Create pager if more than x items.
-        $total_count = count($list);
-        $items_per_page = 10;
-        $currentPage = $this->pagerManager->createPager($total_count, $items_per_page)->getCurrentPage();
-        $chunks = array_chunk($list, $items_per_page);
-
-        $form['artists_fieldset']['title'] = [
-          '#type' => 'item',
-          '#title' => $this->t('Delete artists'),
-        ];
-        $form['artists_fieldset']['table'] = [
-          '#type' => 'tableselect',
-          '#header' => $header,
-          '#options' => $chunks[$currentPage],
-          '#empty' => $this->t('No artists found'),
-        ];
-
-        $form['artists_fieldset']['delete'] = [
-          '#type' => 'submit',
-          '#value' => $this->t('Delete selected items'),
-          '#limit_validation_errors' => [],
-          '#submit' => ['::deleteArtists'],
-        ];
-
-        $form['artists_fieldset']['pager'] = [
-          '#type' => 'pager',
         ];
       }
+
+      // Create pager if more than x items.
+      $total_count = count($list);
+      $items_per_page = 10;
+      $currentPage = $this->pagerManager->createPager($total_count, $items_per_page)->getCurrentPage();
+      $chunks = array_chunk($list, $items_per_page);
+
+      $form['artists_fieldset']['title'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Delete artists'),
+      ];
+      $form['artists_fieldset']['table'] = [
+        '#type' => 'tableselect',
+        '#header' => $header,
+        '#options' => $chunks[$currentPage],
+        '#empty' => $this->t('No artists found'),
+      ];
+
+      $form['artists_fieldset']['delete'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Delete selected items'),
+        '#limit_validation_errors' => [],
+        '#submit' => ['::deleteArtists'],
+      ];
+
+      $form['artists_fieldset']['pager'] = [
+        '#type' => 'pager',
+      ];
     }
 
     return $form;
@@ -216,9 +211,9 @@ class ConfigFormArtists extends ConfigFormBase {
     $query = $form_state->getValue('artist');
     // Call Search service and get results.
     $search_results = [];
-    if ($this->token->status == 200) {
-      $artists = $this->searchArtistsService->searchArtists($this->token->value, $query);
-      $artists->status !== 200 ?: $search_results = $artists->response->items;
+    $artists = $this->searchArtistsService->searchArtists($query);
+    if ($artists->status == 200) {
+      $search_results = $artists->response->items;
     }
 
     if ($search_results) {
@@ -275,7 +270,7 @@ class ConfigFormArtists extends ConfigFormBase {
   /**
    * Delete artists.
    */
-  public function deleteArtists(array &$form, FormStateInterface $form_state) {
+  public function deleteArtists(array $form, FormStateInterface $form_state) {
     // Get data from table of artists to delete.
     $delete_form = $form_state->getUserInput()['table'];
     // Create an array with deleted artists.

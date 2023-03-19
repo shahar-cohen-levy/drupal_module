@@ -58,15 +58,15 @@ class SpotifyApiService {
   public function __construct(ConfigFactoryInterface $config_factory, PrivateTempStoreFactory $temp_store_factory) {
     $this->configFactory = $config_factory;
     $this->tempStoreFactory = $temp_store_factory->get('spotify_artists');
-    $this->clientId = $this->configFactory->get('spotify_artists.api')->get('client_id');
-    $this->clientSecret = $this->configFactory->get('spotify_artists.api')->get('client_secret');
+    $this->clientId = $this->configFactory->get('spotify_artists.api')->get('client_id') ?: getenv('SPOTIFY_CLIENT_ID');
+    $this->clientSecret = $this->configFactory->get('spotify_artists.api')->get('client_secret') ?: getenv('SPOTIFY_CLIENT_SECRET');
     $this->logger = $this->getLogger('spotify.artists');
   }
 
   /**
-   * Set token in session.
+   * Save token to session.
    */
-  public function setToken($token): void {
+  public function saveTokenToSession($token): void {
     try {
       $this->tempStoreFactory->set('token_s', $token);
     }
@@ -96,7 +96,7 @@ class SpotifyApiService {
 
       $body = json_decode($res->getBody());
       $status = json_decode($res->getStatusCode());
-      $this->setToken((object) [
+      $this->saveTokenToSession((object) [
         "status" => $status,
         "value" => $body->{"access_token"},
       ]);

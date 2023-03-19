@@ -2,8 +2,10 @@
 
 namespace Drupal\spotify_artists;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Service to get artists.
@@ -16,15 +18,43 @@ class ArtistsService {
    * @var string
    */
   protected string $token;
+  /**
+   * Spotify API service.
+   *
+   * @var \Drupal\spotify_artists\SpotifyApiService
+   */
+  protected SpotifyApiService $spotifyApiService;
+
+  /**
+   * Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * Constructor.
+   *
+   * @param \Drupal\spotify_artists\SpotifyApiService $spotifyApiService
+   *   Spotify API service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Config factory.
+   */
+  public function __construct(SpotifyApiService $spotifyApiService, ConfigFactoryInterface $configFactory) {
+    $this->spotifyApiService = $spotifyApiService;
+    $this->configFactory = $configFactory;
+    $this->token = $this->spotifyApiService->spotifyApiToken()->value;
+  }
 
   /**
    * Function to get artists.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public function getArtists($token, $artistsIdsArray = []): object {
-
-    $artists_list = implode(",", $artistsIdsArray);
+  public function getArtists(array $artistsIds = NULL): object {
+    if (!isset($artistsIds)) {
+      $artistsIds = $this->configFactory->get('spotify_artists.artists')->get('ids');
+    }
+    $artists_list = implode(",", $artistsIds);
     try {
       $client = new Client([
         'base_uri' => 'https://api.spotify.com',
@@ -33,7 +63,7 @@ class ArtistsService {
       $request = $client->request('GET', '/v1/artists/',
         [
           'headers' => [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer ' . $this->token,
             'Content-Type'  => 'application/json',
           ],
           'query'   => [
@@ -51,6 +81,9 @@ class ArtistsService {
       $status = json_decode($response->getStatusCode());
       return (object) ["status" => $status];
 
+    }
+    catch (GuzzleException $e) {
+      return $e->getCode();
     }
 
   }

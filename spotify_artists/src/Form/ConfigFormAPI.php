@@ -42,14 +42,14 @@ class ConfigFormAPI extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Client ID'),
       '#required' => TRUE,
-      '#default_value' => $config->get('client_id'),
+      '#default_value' => $config->get('client_id') ?: getenv('SPOTIFY_CLIENT_ID'),
     ];
 
     $form['settings_fieldset']['client_secret'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Client Secret'),
       '#required' => TRUE,
-      '#default_value' => $config->get('client_secret'),
+      '#default_value' => $config->get('client_secret') ?: getenv('SPOTIFY_CLIENT_SECRET'),
     ];
 
     $form['actions']['submit'] = [
