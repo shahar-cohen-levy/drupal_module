@@ -10,7 +10,7 @@ use Drupal\spotify_artists\ArtistsService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'field_example_color_background' formatter.
+ * Plugin implementation of the 'field_spotify_artist' formatter.
  *
  * @FieldFormatter(
  *   id = "field_spotify_artist_formatter",

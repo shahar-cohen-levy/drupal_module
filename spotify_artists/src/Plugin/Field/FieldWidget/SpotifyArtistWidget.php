@@ -15,7 +15,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'field_example_text' widget.
+ * Plugin implementation of the 'field_spotify_artist' widget.
  *
  * * @FieldWidget(
  *   id = "field_spotify_artist_widget",

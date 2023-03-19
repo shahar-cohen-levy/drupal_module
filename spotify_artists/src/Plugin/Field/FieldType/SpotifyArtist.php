@@ -7,7 +7,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
 
 /**
- * Plugin implementation of the 'field_example_rgb' field type.
+ * Plugin implementation of the 'field_spotify_artist' field type.
  *
  * @FieldType(
  *   id = "field_spotify_artist",
