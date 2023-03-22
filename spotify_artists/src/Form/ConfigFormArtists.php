@@ -32,6 +32,13 @@ class ConfigFormArtists extends ConfigFormBase {
   protected object|null $token;
 
   /**
+   * Ids in config.
+   *
+   * @var array|null
+   */
+  protected array|null $idsInConfig;
+
+  /**
    * Class constructor.
    */
   public function __construct(
@@ -39,15 +46,14 @@ class ConfigFormArtists extends ConfigFormBase {
     protected SpotifyApiService $spotifyApiService,
     protected ArtistsService $artistsService,
     protected SearchArtistsService $searchArtistsService,
-    protected PagerManager $pagerManager
+    protected PagerManager $pagerManager,
     ) {
     parent::__construct($config_factory);
+    $this->getIdsFromConfig();
   }
 
   /**
    * {@inheritdoc}
-   *
-   * @noinspection PhpParamsInspection
    */
   public static function create(ContainerInterface $container): ConfigFormBase|ConfigFormArtists|static {
     return new static(
@@ -55,8 +61,15 @@ class ConfigFormArtists extends ConfigFormBase {
       $container->get('spotify.api'),
       $container->get('spotify.artists'),
       $container->get('spotify.search'),
-      $container->get('pager.manager')
+      $container->get('pager.manager'),
     );
+  }
+
+  /**
+   * Getter function.
+   */
+  private function getIdsFromConfig() {
+    $this->idsInConfig = $this->config('spotify_artists.artists')->get('ids');
   }
 
   /**
@@ -72,6 +85,7 @@ class ConfigFormArtists extends ConfigFormBase {
    * Build form.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
+
     // Set and get token.
     $this->token = $this->spotifyApiService->spotifyApiToken();
     $form['artists_fieldset'] = [
@@ -256,22 +270,28 @@ class ConfigFormArtists extends ConfigFormBase {
       ->config('spotify_artists.artists')
       ->get('ids');
     // Remove deleted artists from array.
-    foreach ($deleted_artists as $id) {
-      unset($ids_in_config[array_search($id, $ids_in_config)]);
+    if ($deleted_artists) {
+      foreach ($deleted_artists as $id) {
+        unset($ids_in_config[array_search($id, $ids_in_config)]);
+      }
+      // Reset array index.
+      $sorted_ids = array_values($ids_in_config) ?? [];
+      // Get an editable config.
+      $config = $this->config('spotify_artists.artists');
+      // Reset ids in config and save.
+      $config
+        ->clear('ids')
+        ->set('ids', $sorted_ids);
+      $config->save();
+      $this->messenger()->addMessage($this->t('Ids deleted'));
     }
-    // Reset array index.
-    $sorted_ids = array_values($ids_in_config) ?? [];
-    // Get an editable config.
-    $config = $this->config('spotify_artists.artists');
-    // Reset ids in config and save.
-    $config
-      ->clear('ids')
-      ->set('ids', $sorted_ids);
-    $config->save();
+    else {
+      $this->messenger()->addWarning($this->t('Nothing deleted, please select an artist for deletion'));
+    }
+
     // Reset form options for a new search.
-    $form_state->set('options', [])->setUserInput([]);
     $form_state->setRebuild();
-    $this->messenger()->addMessage($this->t('Ids deleted'));
+
   }
 
   /**
@@ -288,13 +308,10 @@ class ConfigFormArtists extends ConfigFormBase {
     }
 
     // Validate artists.
-    $ids_in_config = $this
-      ->config('spotify_artists.artists')
-      ->get('ids');
     // Get selected result from form state.
     $selected_result = $form_state->getUserInput()['results'] ?? NULL;
     // Validate uniqueness.
-    $count = count(array_keys($ids_in_config, $selected_result));
+    $count = count(array_keys($this->idsInConfig, $selected_result));
     if ($selected_result && $count !== 0) {
       $form_state->setErrorByName(
         'results',
@@ -302,7 +319,7 @@ class ConfigFormArtists extends ConfigFormBase {
       );
     }
     // Validate 20 artists limit.
-    if (count($ids_in_config) == 20) {
+    if (count($this->idsInConfig) == 20) {
       $form_state->setErrorByName(
       'results',
       $this->t("You've reached your limit of 20, please delete some in order to add more.")
