@@ -60,9 +60,7 @@ class SpotifyArtistFormatter extends FormatterBase implements ContainerFactoryPl
     $selectedId = $items[0]->value;
     $artistData = $this->artistsService->getArtists([$selectedId]);
     $artist = [];
-    if ($artistData->status === 200) {
-      $artist = current($artistData->artists);
-    }
+    if ($artistData->status === 200) {$artist = current($artistData->artists);}
     return [
       '#theme' => 'spotify_artists_field',
       '#artist' => $artist ?: '',
