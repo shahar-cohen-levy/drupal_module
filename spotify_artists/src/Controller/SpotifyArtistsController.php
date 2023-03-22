@@ -12,20 +12,12 @@ use Drupal\Core\Controller\ControllerBase;
 class SpotifyArtistsController extends ControllerBase {
 
   /**
-   * Artists service.
-   *
-   * @var \Drupal\spotify_artists\ArtistsService
-   */
-  protected ArtistsService $artistsService;
-
-  /**
    * Constructor.
    *
    * @param \Drupal\spotify_artists\ArtistsService $artistsService
    *   Artist service.
    */
-  public function __construct(ArtistsService $artistsService) {
-    $this->artistsService = $artistsService;
+  public function __construct(protected ArtistsService $artistsService) {
   }
 
   /**

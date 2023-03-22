@@ -17,20 +17,12 @@ class SearchArtistsService {
   protected string $token;
 
   /**
-   * Spotify API service.
-   *
-   * @var \Drupal\spotify_artists\SpotifyApiService
-   */
-  protected SpotifyApiService $spotifyApiService;
-
-  /**
    * Constructor.
    *
    * @param \Drupal\spotify_artists\SpotifyApiService $spotifyApiService
    *   spotify API service.
    */
-  public function __construct(SpotifyApiService $spotifyApiService) {
-    $this->spotifyApiService = $spotifyApiService;
+  public function __construct(protected SpotifyApiService $spotifyApiService) {
     $this->token = $this->spotifyApiService->spotifyApiToken()->value;
   }
 

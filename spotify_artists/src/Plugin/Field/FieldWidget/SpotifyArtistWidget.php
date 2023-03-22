@@ -28,43 +28,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SpotifyArtistWidget extends WidgetBase implements ContainerFactoryPluginInterface {
 
-
-  /**
-   * Artists service.
-   *
-   * @var \Drupal\spotify_artists\ArtistsService
-   */
-
-  public ArtistsService $artistsService;
-
-  /**
-   * API service.
-   *
-   * @var \Drupal\spotify_artists\SpotifyApiService
-   */
-  public SpotifyApiService $spotify;
-
-  /**
-   * Plugin config.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected ConfigFactoryInterface $config;
-
-  /**
-   * Account proxy service.
-   *
-   * @var \Drupal\Core\Session\AccountProxyInterface
-   */
-  private AccountProxyInterface $accountProxy;
-
-  /**
-   * Route provider.
-   *
-   * @var \Drupal\Core\Routing\RouteProvider
-   */
-  private RouteProvider $route;
-
   /**
    * {@inheritdoc}
    */
@@ -74,19 +37,13 @@ class SpotifyArtistWidget extends WidgetBase implements ContainerFactoryPluginIn
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    SpotifyApiService $spotify,
-    ArtistsService $artistsService,
-    ConfigFactoryInterface $config_factory,
-    AccountProxyInterface $account_proxy,
-    RouteProvider $routeProvider,
+    protected SpotifyApiService $spotify,
+    protected ArtistsService $artistsService,
+    protected ConfigFactoryInterface $config_factory,
+    protected AccountProxyInterface $account_proxy,
+    protected RouteProvider $routeProvider,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-    $this->spotify = $spotify;
-    $this->artistsService = $artistsService;
-    $this->config = $config_factory;
-    $this->accountProxy = $account_proxy;
-    $this->route = $routeProvider;
-
   }
 
   /**
@@ -118,8 +75,8 @@ class SpotifyArtistWidget extends WidgetBase implements ContainerFactoryPluginIn
     $value = $items[$delta]->value ?? '';
     $options = [];
     // Prepare message based on user access and path.
-    $user_access = $this->accountProxy->getAccount()->hasPermission('administer site configuration');
-    $path = $this->route->getRouteByName('spotify_artists.form_artists')->getPath();
+    $user_access = $this->account_proxy->getAccount()->hasPermission('access custom field');
+    $path = $this->routeProvider->getRouteByName('spotify_artists.form_artists')->getPath();
     $no_artists_msg = $user_access && $path ? "check <a href='$path'>configuration</a>" : "contact administrator";
 
     // Get artists data from service.

@@ -18,20 +18,6 @@ class ArtistsService {
    * @var string
    */
   protected string $token;
-  /**
-   * Spotify API service.
-   *
-   * @var \Drupal\spotify_artists\SpotifyApiService
-   */
-  protected SpotifyApiService $spotifyApiService;
-
-  /**
-   * Config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-
-  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructor.
@@ -41,9 +27,9 @@ class ArtistsService {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory.
    */
-  public function __construct(SpotifyApiService $spotifyApiService, ConfigFactoryInterface $configFactory) {
-    $this->spotifyApiService = $spotifyApiService;
-    $this->configFactory = $configFactory;
+  public function __construct(
+    protected SpotifyApiService $spotifyApiService,
+    protected ConfigFactoryInterface $configFactory) {
     $this->token = $this->spotifyApiService->spotifyApiToken()->value;
   }
 

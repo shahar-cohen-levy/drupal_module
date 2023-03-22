@@ -35,14 +35,8 @@ class SpotifyApiService {
    *
    * @var \Drupal\Core\TempStore\PrivateTempStore
    */
-  protected PrivateTempStore $tempStoreFactory;
+  protected PrivateTempStore $privateTempStore;
 
-  /**
-   * Config Factory Service Object.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Logger Service Object.
@@ -55,11 +49,13 @@ class SpotifyApiService {
   /**
    * Constructor to get values from config.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, PrivateTempStoreFactory $temp_store_factory) {
-    $this->configFactory = $config_factory;
-    $this->tempStoreFactory = $temp_store_factory->get('spotify_artists');
-    $this->clientId = $this->configFactory->get('spotify_artists.api')->get('client_id') ?: getenv('SPOTIFY_CLIENT_ID');
-    $this->clientSecret = $this->configFactory->get('spotify_artists.api')->get('client_secret') ?: getenv('SPOTIFY_CLIENT_SECRET');
+  public function __construct(
+    protected ConfigFactoryInterface $config_factory,
+    protected PrivateTempStoreFactory $temp_store_factory
+  ) {
+    $this->privateTempStore = $this->temp_store_factory->get('spotify_artists');
+    $this->clientId = $this->config_factory->get('spotify_artists.api')->get('client_id') ?: getenv('SPOTIFY_CLIENT_ID');
+    $this->clientSecret = $this->config_factory->get('spotify_artists.api')->get('client_secret') ?: getenv('SPOTIFY_CLIENT_SECRET');
     $this->logger = $this->getLogger('spotify.artists');
   }
 
@@ -68,7 +64,7 @@ class SpotifyApiService {
    */
   public function saveTokenToSession($token): void {
     try {
-      $this->tempStoreFactory->set('token_s', $token);
+      $this->privateTempStore->set('token_s', $token);
     }
     catch (TempStoreException $e) {
       $this->logger->error($e->getMessage());
@@ -123,8 +119,8 @@ class SpotifyApiService {
    *   A token as a string.
    */
   public function spotifyApiToken(): string|object|null {
-    if ($this->tempStoreFactory->get('token_s') !== NULL) {
-      return $this->tempStoreFactory->get('token_s');
+    if ($this->privateTempStore->get('token_s') !== NULL) {
+      return $this->privateTempStore->get('token_s');
     }
     else {
       return $this->accessWithCodeAuthorization();

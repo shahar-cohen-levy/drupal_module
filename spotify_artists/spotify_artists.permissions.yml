@@ -1,0 +1,6 @@
+access spotify config:
+  title: 'Access module configuration'
+  description: 'Access API settings and artists list'
+access custom field:
+  title: 'Access custom field'
+  description: 'Ability to use artists field and display info'

@@ -19,23 +19,14 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 class ArtistsBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
-   * Artists service.
-   *
-   * @var \Drupal\spotify_artists\ArtistsService
-   */
-
-  public ArtistsService $artistsService;
-
-  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration,
                                $plugin_id,
                                $plugin_definition,
-                               ArtistsService $artistsService,
+                               public ArtistsService $artistsService,
                               ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->artistsService = $artistsService;
   }
 
   /**

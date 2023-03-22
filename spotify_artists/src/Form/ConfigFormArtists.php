@@ -24,31 +24,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ConfigFormArtists extends ConfigFormBase {
 
   /**
-   * Search artists service.
-   *
-   * @var \Drupal\spotify_artists\SearchArtistsService
-   */
-
-  protected SearchArtistsService $searchArtistsService;
-  /**
-   * Artists service.
-   *
-   * @var \Drupal\spotify_artists\ArtistsService
-   */
-  protected ArtistsService $artistsService;
-  /**
-   * API service.
-   *
-   * @var \Drupal\spotify_artists\SpotifyApiService
-   */
-  protected SpotifyApiService $spotifyApiService;
-  /**
-   * Pager service.
-   *
-   * @var \Drupal\Core\Pager\PagerManager
-   */
-  protected PagerManager $pagerManager;
-  /**
    * API token.
    *
    * @var object|null
@@ -60,17 +35,13 @@ class ConfigFormArtists extends ConfigFormBase {
    * Class constructor.
    */
   public function __construct(
-    ConfigFactoryInterface $config_factory,
-    SpotifyApiService $spotifyApiService,
-    ArtistsService $artistsService,
-    SearchArtistsService $searchArtistsService,
-    PagerManager $pagerManager
+    protected ConfigFactoryInterface $config_factory,
+    protected SpotifyApiService $spotifyApiService,
+    protected ArtistsService $artistsService,
+    protected SearchArtistsService $searchArtistsService,
+    protected PagerManager $pagerManager
     ) {
     parent::__construct($config_factory);
-    $this->spotifyApiService = $spotifyApiService;
-    $this->artistsService = $artistsService;
-    $this->searchArtistsService = $searchArtistsService;
-    $this->pagerManager = $pagerManager;
   }
 
   /**
