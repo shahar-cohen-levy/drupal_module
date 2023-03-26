@@ -6,7 +6,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\spotify_artists\ArtistsService;
+use Drupal\spotify_artists\Service\ArtistsService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

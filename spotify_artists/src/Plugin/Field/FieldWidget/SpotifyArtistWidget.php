@@ -9,8 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\RouteProvider;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\spotify_artists\ArtistsService;
-use Drupal\spotify_artists\SpotifyApiService;
+use Drupal\spotify_artists\Service\ArtistsService;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -37,7 +36,6 @@ class SpotifyArtistWidget extends WidgetBase implements ContainerFactoryPluginIn
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    protected SpotifyApiService $spotify,
     protected ArtistsService $artistsService,
     protected ConfigFactoryInterface $config_factory,
     protected AccountProxyInterface $account_proxy,
@@ -60,7 +58,6 @@ class SpotifyArtistWidget extends WidgetBase implements ContainerFactoryPluginIn
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('spotify.api'),
       $container->get('spotify.artists'),
       $container->get('config.factory'),
       $container->get('current_user'),

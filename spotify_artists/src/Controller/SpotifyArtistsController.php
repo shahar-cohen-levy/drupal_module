@@ -2,7 +2,7 @@
 
 namespace Drupal\spotify_artists\Controller;
 
-use Drupal\spotify_artists\ArtistsService;
+use Drupal\spotify_artists\Service\ArtistsService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Controller\ControllerBase;
 
@@ -14,7 +14,7 @@ class SpotifyArtistsController extends ControllerBase {
   /**
    * Constructor.
    *
-   * @param \Drupal\spotify_artists\ArtistsService $artistsService
+   * @param \Drupal\spotify_artists\Service\ArtistsService $artistsService
    *   Artist service.
    */
   public function __construct(protected ArtistsService $artistsService) {

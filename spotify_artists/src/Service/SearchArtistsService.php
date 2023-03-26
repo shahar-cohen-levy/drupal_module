@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\spotify_artists;
+namespace Drupal\spotify_artists\Service;
 
 use Drupal\spotify_artists\Event\APIEvents;
 use Drupal\spotify_artists\Event\APIReportEvent;
@@ -22,11 +22,11 @@ class SearchArtistsService {
   /**
    * Constructor.
    *
-   * @param \Drupal\spotify_artists\SpotifyApiService $spotifyApiService
+   * @param \Drupal\spotify_artists\Service\SpotifyApiService $spotifyApiService
    *   spotify API service.
    */
   public function __construct(protected SpotifyApiService $spotifyApiService, protected EventDispatcherInterface $dispatcher) {
-    $this->token = $this->spotifyApiService->spotifyApiToken()->value;
+    $this->token = $this->spotifyApiService->spotifyApiToken()['status'] == 200 ? $this->spotifyApiService->spotifyApiToken()['value'] : '';
   }
 
   /**

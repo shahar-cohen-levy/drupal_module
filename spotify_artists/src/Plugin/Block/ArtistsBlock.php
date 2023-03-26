@@ -3,7 +3,7 @@
 namespace Drupal\spotify_artists\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
-use Drupal\spotify_artists\ArtistsService;
+use Drupal\spotify_artists\Service\ArtistsService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\spotify_artists;
+namespace Drupal\spotify_artists\Service;
 
 use Drupal\spotify_artists\Event\APIEvents;
 use Drupal\spotify_artists\Event\APIReportEvent;
@@ -78,7 +78,7 @@ class SpotifyApiService {
   /**
    * Generate token.
    */
-  public function accessWithCodeAuthorization(): object {
+  public function accessWithCodeAuthorization(): array {
     $client = new Client();
 
     try {
@@ -102,21 +102,21 @@ class SpotifyApiService {
       $event = new APIReportEvent($type);
       $this->event_dispatcher->dispatch($event, APIEvents::NEW_REPORT);
 
-      $this->saveTokenToSession((object) [
+      $this->saveTokenToSession([
         "status" => $status,
         "value" => $body->{"access_token"},
       ]);
-      return (object) ["status" => $status, "value" => $body->{"access_token"}];
+      return ["status" => $status, "value" => $body->{"access_token"}];
     }
     catch (ClientException $e) {
       $response = $e->getResponse();
       $status = json_decode($response->getStatusCode());
-      return (object) ["status" => $status];
+      return ["status" => $status];
     }
     catch (GuzzleException $e) {
       $response = $e->getMessage();
       $this->logger->error($response);
-      return (object) ["status" => 999];
+      return ["status" => 999];
     }
   }
 
@@ -128,7 +128,7 @@ class SpotifyApiService {
    * @return string|object|null
    *   A token as a string.
    */
-  public function spotifyApiToken(): string|object|null {
+  public function spotifyApiToken(): string|array|null {
     if ($this->privateTempStore->get('token_s') !== NULL) {
       return $this->privateTempStore->get('token_s');
     }

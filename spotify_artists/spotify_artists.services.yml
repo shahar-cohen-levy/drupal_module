@@ -1,12 +1,12 @@
 services:
   spotify.api:
-    class: Drupal\spotify_artists\SpotifyApiService
+    class: Drupal\spotify_artists\Service\SpotifyApiService
     arguments: ['@config.factory', '@spotify.tempstore.private', '@event_dispatcher']
   spotify.artists:
-    class: Drupal\spotify_artists\ArtistsService
+    class: Drupal\spotify_artists\Service\ArtistsService
     arguments: [ '@spotify.api', '@config.factory', '@spotify.tempstore.private', '@event_dispatcher' ]
   spotify.search:
-    class: Drupal\spotify_artists\SearchArtistsService
+    class: Drupal\spotify_artists\Service\SearchArtistsService
     arguments: [ '@spotify.api' ,'@event_dispatcher']
   spotify.tempstore.private:
     class: Drupal\Core\TempStore\PrivateTempStoreFactory

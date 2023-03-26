@@ -34,7 +34,7 @@ class SpotifyArtistsReport extends ControllerBase {
   public function reportPage(): array {
     $data = NULL;
     try {
-      $data = $this->connection->query("SELECT date_time,type FROM spotify_artists_reports ORDER BY id DESC")->fetchAll();
+      $data = $this->connection->query('SELECT date_time,type FROM spotify_artists_reports ORDER BY id DESC')->fetchAll();
     }
     catch (\Exception $e) {
       $this->getLogger('spotify.artists')->info($e->getMessage());

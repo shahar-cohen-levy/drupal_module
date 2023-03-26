@@ -7,9 +7,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Pager\PagerManager;
-use Drupal\spotify_artists\SpotifyApiService;
-use Drupal\spotify_artists\ArtistsService;
-use Drupal\spotify_artists\SearchArtistsService;
+use Drupal\spotify_artists\Service\SpotifyApiService;
+use Drupal\spotify_artists\Service\ArtistsService;
+use Drupal\spotify_artists\Service\SearchArtistsService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,10 +26,10 @@ class ConfigFormArtists extends ConfigFormBase {
   /**
    * API token.
    *
-   * @var object|null
+   * @var array|null
    */
 
-  protected object|null $token;
+  protected array|null $token;
 
   /**
    * Ids in config.
