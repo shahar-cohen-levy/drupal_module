@@ -58,16 +58,20 @@ class SpotifyArtistFormatter extends FormatterBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
-    $selectedId = $items[0]->value;
-    $artistsData = $this->artistsService->getArtists($selectedId);
+    $selectedId = $items[0] ? $items[0]->value : '';
     $artistData = [];
-    $ids = [];
-    // Create an array of ids in order to find the index of selected artist.
-    foreach ($artistsData['artists'] as $artist) {
-      $ids[] = $artist->id;
-    }
-    if ($artistsData['status'] === 200) {
-      $artistData = $artistsData['artists'][array_search($selectedId, $ids)];
+    if ($selectedId) {
+      $artistsData = $this->artistsService->getArtists($selectedId);
+
+      $ids = [];
+      // Create an array of ids in order to find the index of selected artist.
+      foreach ($artistsData['artists'] as $artist) {
+        $ids[] = $artist->id;
+      }
+      if ($artistsData['status'] === 200) {
+        $artistData = $artistsData['artists'][array_search($selectedId, $ids)];
+      }
+
     }
     return [
       '#theme' => 'spotify_artists_field',

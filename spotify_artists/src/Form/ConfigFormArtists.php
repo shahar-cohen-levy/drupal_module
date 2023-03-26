@@ -84,10 +84,15 @@ class ConfigFormArtists extends ConfigFormBase {
   /**
    * Build form.
    */
-  public function buildForm(array $form, FormStateInterface $form_state): array {
+  public function buildForm(array $form, FormStateInterface $form_state) {
 
     // Set and get token.
     $this->token = $this->spotifyApiService->spotifyApiToken();
+    // If token isn't valid show an error and don't populate form.
+    if ($this->token['status'] !== 200) {
+      $this->messenger()->addError($this->t('Token is not valid, please make sure your API settings credentials are valid'));
+      return;
+    }
     $form['artists_fieldset'] = [
       '#type' => 'details',
       '#title' => $this->t('Artists'),
