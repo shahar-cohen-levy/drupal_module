@@ -81,8 +81,8 @@ class SpotifyArtistWidget extends WidgetBase implements ContainerFactoryPluginIn
 
     // Get artists data from service.
     $artists = $this->artistsService->getArtists();
-    if ($artists->status === 200) {
-      $artists = $artists->artists;
+    if ($artists['status'] === 200) {
+      $artists = $artists['artists'];
       foreach ($artists as $artist) {
         $options[$artist->id] = $artist->name;
       }

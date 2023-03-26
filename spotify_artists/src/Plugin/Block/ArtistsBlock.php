@@ -48,8 +48,8 @@ class ArtistsBlock extends BlockBase implements ContainerFactoryPluginInterface 
 
     // Get artists data from service.
     $artists = $this->artistsService->getArtists();
-    if ($artists->status === 200) {
-      $artists = $artists->artists;
+    if ($artists['status'] === 200) {
+      $artists = $artists['artists'];
     }
 
     return [

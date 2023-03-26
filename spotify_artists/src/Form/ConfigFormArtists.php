@@ -140,8 +140,8 @@ class ConfigFormArtists extends ConfigFormBase {
     $artists = $this->artistsService->getArtists();
     // Create an array for the table.
     $list = [];
-    if ($artists->status == 200) {
-      foreach ($artists->artists as $key => $artist) {
+    if ($artists['status'] == 200) {
+      foreach ($artists['artists'] as $key => $artist) {
         $list[$key] = [
           'artist_name' => Markup::create('<a href="/spotify_artist/' . $artist->id . '">' . $artist->name . '</a>'),
           'artist_id' => $artist->id,
@@ -197,8 +197,8 @@ class ConfigFormArtists extends ConfigFormBase {
     // Call Search service and get results.
     $search_results = [];
     $artists = $this->searchArtistsService->searchArtists($query);
-    if ($artists->status == 200) {
-      $search_results = $artists->response->items;
+    if ($artists['status'] == 200) {
+      $search_results = $artists['response']->items;
     }
 
     if ($search_results) {

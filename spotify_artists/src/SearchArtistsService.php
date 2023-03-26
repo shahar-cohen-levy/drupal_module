@@ -2,8 +2,11 @@
 
 namespace Drupal\spotify_artists;
 
+use Drupal\spotify_artists\Event\APIEvents;
+use Drupal\spotify_artists\Event\APIReportEvent;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Client;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Search Artists service.
@@ -22,20 +25,21 @@ class SearchArtistsService {
    * @param \Drupal\spotify_artists\SpotifyApiService $spotifyApiService
    *   spotify API service.
    */
-  public function __construct(protected SpotifyApiService $spotifyApiService) {
+  public function __construct(protected SpotifyApiService $spotifyApiService, protected EventDispatcherInterface $dispatcher) {
     $this->token = $this->spotifyApiService->spotifyApiToken()->value;
   }
 
   /**
    * Search Artists.
    *
-   * @return object
+   * @param $query
+   *
+   * @return array array of artists.
    *   array of artists.
    *
-   * @throws \GuzzleHttp\Exception\GuzzleException
-   *   Error message.
+   * @throws \GuzzleHttp\Exception\GuzzleException Error message.
    */
-  public function searchArtists($query): object {
+  public function searchArtists($query): array {
 
     $client = new Client([
       'base_uri' => 'https://api.spotify.com',
@@ -55,12 +59,16 @@ class SearchArtistsService {
       );
       $body = json_decode($request->getBody());
       $status = json_decode($request->getStatusCode());
-      return (object) ["status" => $status, "response" => $body->artists];
+      // Dispatch event for reports.
+      $event = new APIReportEvent('search_query');
+      $this->dispatcher->dispatch($event, APIEvents::NEW_REPORT);
+
+      return ["status" => $status, "response" => $body->artists];
     }
     catch (ClientException $e) {
       $response = $e->getResponse();
       $status = json_decode($response->getStatusCode());
-      return (object) ["status" => $status];
+      return ["status" => $status];
     }
 
   }

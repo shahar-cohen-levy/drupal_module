@@ -22,8 +22,6 @@ class SpotifyArtistsController extends ControllerBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @noinspection PhpParamsInspection
    */
   public static function create(ContainerInterface $container): SpotifyArtistsController|static {
     return new static(
@@ -35,17 +33,25 @@ class SpotifyArtistsController extends ControllerBase {
    * Build single artist page.
    */
   public function buildPage($artist_id): array {
-    // Get artists from service.
-    $spotify_artists = $this->artistsService;
-    $artist = $spotify_artists->getArtists([$artist_id]);
-    if ($artist->status === 200) {
-      $artist = current($artist->artists);
+    // Get artists from config.
+    $artistsInConfig = $this->config('spotify_artists.artists')->get('ids');
+    // If id from url is one of the artists in config.
+    if ($artistsInConfig && in_array($artist_id, $artistsInConfig)) {
+      // Get artists from service.
+      $spotify_artists = $this->artistsService;
+      $artist = $spotify_artists->getArtists($artist_id);
+      if ($artist['status'] === 200) {
+        $artist = $artist['artists'][array_search($artist_id, $artistsInConfig)];
+      }
+    }
+    // Else return an empty artist.
+    else {
+      $artist = NULL;
     }
 
     return [
       '#theme' => 'spotify_artists_page',
       '#artist' => $artist,
-      '#artist_from_url' => $artist_id,
     ];
   }
 

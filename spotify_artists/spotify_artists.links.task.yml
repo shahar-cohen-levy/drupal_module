@@ -8,3 +8,8 @@ spotify_artists.form_api:
   title: 'API Settings'
   base_route: spotify_artists.form_artists
   weight: 5
+spotify_artists.report:
+  route_name: spotify_artists.report
+  title: 'API report'
+  base_route: spotify_artists.form_artists
+  weight: 5

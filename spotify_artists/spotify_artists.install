@@ -1,0 +1,54 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Spotify Artists module.
+ */
+
+use Drupal\Core\Database\Database;
+
+/**
+ * Implements hook_schema().
+ *
+ * Defines the database tables used by this module.
+ *
+ * @see hook_schema()
+ */
+function spotify_artists_schema(): array {
+  $schema['spotify_artists_reports'] = [
+    'description' => 'Stores data of API requests',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Holds the id value.',
+      ],
+      'date_time' => [
+        'type' => 'int',
+        'length' => 20,
+        'not null' => TRUE,
+        'description' => 'Date and time of request.',
+      ],
+      'type' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Type of request.',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Remove table on uninstall.
+ */
+function spotify_artists_uninstall(): void {
+  $table = 'spotify_artists_reports';
+  $schema = Database::getConnection()->schema();
+  $schema->dropTable($table);
+}

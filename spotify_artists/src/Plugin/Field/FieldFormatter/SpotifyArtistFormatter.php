@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class SpotifyArtistFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+
   /**
    * {@inheritdoc}
    */
@@ -58,12 +59,19 @@ class SpotifyArtistFormatter extends FormatterBase implements ContainerFactoryPl
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $selectedId = $items[0]->value;
-    $artistData = $this->artistsService->getArtists([$selectedId]);
-    $artist = [];
-    if ($artistData->status === 200) {$artist = current($artistData->artists);}
+    $artistsData = $this->artistsService->getArtists($selectedId);
+    $artistData = [];
+    $ids = [];
+    // Create an array of ids in order to find the index of selected artist.
+    foreach ($artistsData['artists'] as $artist) {
+      $ids[] = $artist->id;
+    }
+    if ($artistsData['status'] === 200) {
+      $artistData = $artistsData['artists'][array_search($selectedId, $ids)];
+    }
     return [
       '#theme' => 'spotify_artists_field',
-      '#artist' => $artist ?: '',
+      '#artist' => $artistData ?: '',
     ];
   }
 

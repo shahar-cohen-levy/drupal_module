@@ -2,6 +2,8 @@
 
 namespace Drupal\spotify_artists;
 
+use Drupal\spotify_artists\Event\APIEvents;
+use Drupal\spotify_artists\Event\APIReportEvent;
 use Psr\Log\LoggerInterface;
 use Drupal\Core\TempStore\PrivateTempStore;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -11,6 +13,7 @@ use GuzzleHttp\Client;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use GuzzleHttp\Exception\GuzzleException;
 use Drupal\Core\Logger\LoggerChannelTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * API service.
@@ -51,7 +54,8 @@ class SpotifyApiService {
    */
   public function __construct(
     protected ConfigFactoryInterface $config_factory,
-    protected PrivateTempStoreFactory $temp_store_factory
+    protected PrivateTempStoreFactory $temp_store_factory,
+    protected EventDispatcherInterface $event_dispatcher
   ) {
     $this->privateTempStore = $this->temp_store_factory->get('spotify_artists');
     $this->clientId = $this->config_factory->get('spotify_artists.api')->get('client_id') ?: getenv('SPOTIFY_CLIENT_ID');
@@ -92,6 +96,12 @@ class SpotifyApiService {
 
       $body = json_decode($res->getBody());
       $status = json_decode($res->getStatusCode());
+
+      // Event.
+      $type = 'token';
+      $event = new APIReportEvent($type);
+      $this->event_dispatcher->dispatch($event, APIEvents::NEW_REPORT);
+
       $this->saveTokenToSession((object) [
         "status" => $status,
         "value" => $body->{"access_token"},

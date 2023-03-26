@@ -4,6 +4,12 @@ spotify_artists.content:
     _controller: '\Drupal\spotify_artists\Controller\SpotifyArtistsController::buildPage'
   requirements:
     _user_is_logged_in: 'TRUE'
+spotify_artists.report:
+  path: '/admin/config/content/api_report'
+  defaults:
+    _controller: '\Drupal\spotify_artists\Controller\SpotifyArtistsReport::reportPage'
+  requirements:
+    _permission: 'access spotify config'
 spotify_artists.form_api:
   path: '/admin/config/content/spotify_api'
   defaults:
