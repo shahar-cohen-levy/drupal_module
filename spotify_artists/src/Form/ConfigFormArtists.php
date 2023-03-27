@@ -91,7 +91,7 @@ class ConfigFormArtists extends ConfigFormBase {
     // If token isn't valid show an error and don't populate form.
     if ($this->token['status'] !== 200) {
       $this->messenger()->addError($this->t('Token is not valid, please make sure your API settings credentials are valid'));
-      return;
+      return NULL;
     }
     $form['artists_fieldset'] = [
       '#type' => 'details',

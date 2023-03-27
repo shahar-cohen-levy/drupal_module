@@ -19,7 +19,10 @@
       <h2>{{ 'Oops no artist info, check settings.'|t }}</h2>
   {% else %}
       <h2>{{ 'Oops no artist info, try selecting one from this list:'|t }}</h2>
-      {{ drupal_block('spotify_artists_block') }}
+      {% include 'spotify-artists-block.html.twig' with {
+          artists: existing_artists
+      }  %}
+{#      {{ drupal_block('spotify_artists_block') }}#}
   {% endif %}
 
 {% endif %}

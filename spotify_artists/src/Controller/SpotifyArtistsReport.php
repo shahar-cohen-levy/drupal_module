@@ -46,13 +46,16 @@ class SpotifyArtistsReport extends ControllerBase {
     ];
 
     $rows = [];
-    foreach ($data as $row) {
-      // Formatting date and time.
-      $row->date_time = $this->dateFormatter->format($row->date_time);
-      // Formatting type.
-      $row->type = ucfirst(str_replace("_", " ", $row->type));
-      $rows[] = ['data' => (array) $row];
+    if ($data) {
+      foreach ($data as $row) {
+        // Formatting date and time.
+        $row->date_time = $this->dateFormatter->format($row->date_time);
+        // Formatting type.
+        $row->type = ucfirst(str_replace("_", " ", $row->type));
+        $rows[] = ['data' => (array) $row];
+      }
     }
+
 
     return [
       '#caption' => $this->t('Reports for every API request in order to monitor unnecessary requests'),

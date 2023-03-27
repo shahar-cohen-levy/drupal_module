@@ -78,6 +78,7 @@ class APISubscriber implements EventSubscriberInterface {
     }
     catch (\Exception $e) {
       $this->getLogger('spotify.artists')->info($e->getMessage());
+      $this->messenger->addError($this->t('Cannot write to report, spotify_artists_reports table does not exist, try reinstalling the module'));
     }
   }
 

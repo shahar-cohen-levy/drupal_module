@@ -35,6 +35,7 @@ class SpotifyArtistsController extends ControllerBase {
   public function buildPage($artist_id): array {
     // Get artists from config.
     $artistsInConfig = $this->config('spotify_artists.artists')->get('ids');
+    $artists = Null;
     // If id from url is one of the artists in config.
     if ($artistsInConfig && in_array($artist_id, $artistsInConfig)) {
       // Get artists from service.
@@ -44,14 +45,22 @@ class SpotifyArtistsController extends ControllerBase {
         $artist = $artist['artists'][array_search($artist_id, $artistsInConfig)];
       }
     }
-    // Else return an empty artist.
+
+    // Else return an empty artist and existing artists.
     else {
       $artist = NULL;
+      // Get artists data from service.
+      $artists = $this->artistsService->getArtists();
+      if ($artists['status'] === 200) {
+        $artists = $artists['artists'];
+      }
+
     }
 
     return [
       '#theme' => 'spotify_artists_page',
       '#artist' => $artist,
+      '#existing_artists' => $artists,
     ];
   }
 
