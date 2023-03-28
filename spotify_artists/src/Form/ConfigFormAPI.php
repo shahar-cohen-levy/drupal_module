@@ -2,8 +2,11 @@
 
 namespace Drupal\spotify_artists\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\spotify_artists\Service\SpotifyApiService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Implements the ajax demo form controller.
@@ -17,17 +20,36 @@ use Drupal\Core\Form\FormStateInterface;
 class ConfigFormAPI extends ConfigFormBase {
 
   /**
-   * Form with 'add more' and 'remove' buttons.
+   * Form with API credentials.
    *
-   * This example shows a button to "add more" - add another textfield, and
-   * the corresponding "remove" button.
+   * See more: https://developer.spotify.com/documentation/web-api/tutorials/getting-started#create-an-app.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, public SpotifyApiService $spotifyApiService) {
+    parent::__construct($config_factory);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): ConfigFormAPI|ConfigFormBase|static {
+    // Instantiates this form class.
+    return new static(
+    // Load the service required to construct this class.
+      $container->get('config.factory'),
+      $container->get('spotify.api')
+    );
+  }
+
+  /**
+   * Settings form.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
+
     $config = $this->config('spotify_artists.api');
 
     $form['description'] = [
       '#type' => 'item',
-      '#markup' => $this->t('This example shows an add-more and a remove-last button.'),
+      '#markup' => $this->t('Set Spotify API here. You may validate before saving.'),
     ];
 
     $form['settings_fieldset'] = [
@@ -36,6 +58,12 @@ class ConfigFormAPI extends ConfigFormBase {
       '#prefix' => '<div id="settings-fieldset-wrapper">',
       '#suffix' => '</div>',
       '#open' => TRUE,
+    ];
+
+    $form['settings_fieldset']['valid_info'] = [
+      '#type' => 'item',
+      '#prefix' => '<div id="valid-info">',
+      '#suffix' => '</div>',
     ];
 
     $form['settings_fieldset']['client_id'] = [
@@ -57,6 +85,17 @@ class ConfigFormAPI extends ConfigFormBase {
       '#value' => $this->t('Submit'),
     ];
 
+    $form['actions']['verify'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Verify'),
+      '#submit' => ['::verifyApi'],
+      '#ajax' => [
+        'callback' => '::verifyApi',
+        'event' => 'click',
+        'wrapper' => 'valid-info',
+      ],
+    ];
+
     return $form;
   }
 
@@ -65,6 +104,25 @@ class ConfigFormAPI extends ConfigFormBase {
    */
   public function getFormId(): string {
     return 'spotify_artists_form_api';
+  }
+
+  /**
+   * Option to verify API credentials.
+   */
+  public function verifyApi(array &$form): array {
+    $response = $this->spotifyApiService->accessWithCodeAuthorization($form["settings_fieldset"]["client_id"]["#value"], $form["settings_fieldset"]["client_secret"]["#value"]);
+    if ($response['status'] == 200) {
+      $message = $this->t("API valid, you may save these credentials");
+      $class = 'color-success';
+    }
+    else {
+      $message = $this->t("API not valid, please check these credentials");
+      $class = 'color-error ';
+    }
+    $output = "<div id='valid-info'><span class='$class'>$message</span></div>";
+
+    // Return the HTML markup we built above in a render array.
+    return ['#markup' => $output];
   }
 
   /**

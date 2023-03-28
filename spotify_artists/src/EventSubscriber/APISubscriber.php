@@ -34,7 +34,7 @@ class APISubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents(): array {
-    $events[APIEvents::NEW_REPORT][] = ['notifyAndLog'];
+    $events[APIEvents::NEW_REPORT][] = ['saveToDb'];
     return $events;
   }
 
@@ -44,28 +44,7 @@ class APISubscriber implements EventSubscriberInterface {
    * @param \Drupal\spotify_artists\Event\APIReportEvent $event
    *   The event object containing types.
    */
-  public function notifyAndLog(APIReportEvent $event) {
-    if ($this->accountProxy->hasPermission('Access module configuration')) {
-      switch ($event->getApiType()) {
-        case 'artists_request':
-          $this->messenger()
-            ->addStatus($this->t('Artists API request has been made. This message was set by an event subscriber. See @method()', ['@method' => __METHOD__]));
-          break;
-
-        case 'token':
-          $this->messenger()
-            ->addStatus($this->t('API token has been used. This message was set by an event subscriber. See @method()', ['@method' => __METHOD__]));
-          break;
-
-        case 'search_query':
-          $this->messenger()
-            ->addStatus($this->t('Search has been made. This message was set by an event subscriber. See @method()', ['@method' => __METHOD__]));
-          break;
-
-        default:
-          return;
-      }
-    }
+  public function saveToDb(APIReportEvent $event) {
     // Get current time.
     $dateTime = $this->time->getCurrentTime();
     // Save to database.

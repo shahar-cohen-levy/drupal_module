@@ -78,7 +78,9 @@ class SpotifyApiService {
   /**
    * Generate token.
    */
-  public function accessWithCodeAuthorization(): array {
+  public function accessWithCodeAuthorization($id = NULL, $secret = NULL): array {
+    $id = $id ?: $this->clientId;
+    $secret = $secret ?: $this->clientSecret;
     $client = new Client();
 
     try {
@@ -86,7 +88,7 @@ class SpotifyApiService {
 
         'headers' => [
           'Content-Type' => 'application/x-www-form-urlencoded',
-          'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret),
+          'Authorization' => 'Basic ' . base64_encode($id . ':' . $secret),
         ],
 
         'form_params' => [
