@@ -16,7 +16,11 @@ use Drupal\Core\Logger\LoggerChannelTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * API service.
+ * API service used to get a token used for requests. Client/secret sources:.
+ *
+ *  1. Config settings.
+ *  2. Environment variables.
+ *  3. Passed directly to accessWithCodeAuthorization method.
  */
 class SpotifyApiService {
   use LoggerChannelTrait;
