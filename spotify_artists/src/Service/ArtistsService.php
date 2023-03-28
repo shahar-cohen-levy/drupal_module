@@ -38,7 +38,7 @@ class ArtistsService {
     protected SpotifyApiService $spotifyApiService,
     protected ConfigFactoryInterface $configFactory,
     protected PrivateTempStoreFactory $temp_store_factory,
-    protected EventDispatcherInterface $dispatcher
+    protected EventDispatcherInterface $dispatcher,
   ) {
     $this->token = $this->spotifyApiService->spotifyApiToken()['status'] == 200 ? $this->spotifyApiService->spotifyApiToken()['value'] : '';
     $this->tempStore = $this->temp_store_factory->get('spotify_artists');
