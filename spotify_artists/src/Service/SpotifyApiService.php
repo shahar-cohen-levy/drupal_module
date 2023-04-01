@@ -83,6 +83,7 @@ class SpotifyApiService {
    * Generate token.
    */
   public function accessWithCodeAuthorization($id = NULL, $secret = NULL): array {
+    $verify = $id && $secret;
     $id = $id ?: $this->clientId;
     $secret = $secret ?: $this->clientSecret;
     $client = new Client();
@@ -104,7 +105,7 @@ class SpotifyApiService {
       $status = json_decode($res->getStatusCode());
 
       // Dispatch an event for reports section.
-      $event = new APIReportEvent('token');
+      $event = new APIReportEvent($verify ? 'verify_token' : 'token');
       $this->event_dispatcher->dispatch($event, APIEvents::NEW_REPORT);
 
       $this->saveTokenToSession([

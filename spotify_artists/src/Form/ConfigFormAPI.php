@@ -79,21 +79,19 @@ class ConfigFormAPI extends ConfigFormBase {
       '#required' => TRUE,
       '#default_value' => $config->get('client_secret') ?: getenv('SPOTIFY_CLIENT_SECRET'),
     ];
-
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Submit'),
-    ];
-
     $form['actions']['verify'] = [
-      '#type' => 'submit',
+      '#type' => 'button',
       '#value' => $this->t('Verify'),
-      '#submit' => ['::verifyApi'],
       '#ajax' => [
         'callback' => '::verifyApi',
         'event' => 'click',
         'wrapper' => 'valid-info',
       ],
+    ];
+
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Submit'),
     ];
 
     return $form;
