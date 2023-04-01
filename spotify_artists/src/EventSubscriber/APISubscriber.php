@@ -3,8 +3,11 @@
 namespace Drupal\spotify_artists\EventSubscriber;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Logger\LoggerChannelTrait;
+use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\spotify_artists\Event\APIEvents;
 use Drupal\spotify_artists\Event\APIReportEvent;
@@ -26,7 +29,10 @@ class APISubscriber implements EventSubscriberInterface {
    */
   public function __construct(private readonly AccountProxyInterface $accountProxy,
                               private readonly Connection $connection,
-                              private readonly TimeInterface $time
+                              private readonly TimeInterface $time,
+                              private readonly MailManagerInterface $mailManager,
+                              private readonly ConfigFactoryInterface $configFactory,
+                              private readonly LanguageManagerInterface $languageManager
   ) {
   }
 
@@ -58,6 +64,13 @@ class APISubscriber implements EventSubscriberInterface {
     catch (\Exception $e) {
       $this->getLogger('spotify.artists')->info($e->getMessage());
       $this->messenger->addError($this->t('Cannot write to report, spotify_artists_reports table does not exist, try reinstalling the module'));
+      $this->mailManager->mail(
+        'spotify_artists',
+        'reports_message',
+        $this->configFactory->get('system.site')->get('mail'),
+        $this->languageManager->getDefaultLanguage()->getId(),
+        str_replace("_", " ", $event->getApiType()),
+      );
     }
   }
 

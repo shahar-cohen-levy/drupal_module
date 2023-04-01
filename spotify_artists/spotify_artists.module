@@ -8,7 +8,7 @@
 /**
  * Implements hook_theme().
  */
-function spotify_artists_theme() {
+function spotify_artists_theme(): array {
 
   return [
     'spotify_artists_block' => [
@@ -28,4 +28,16 @@ function spotify_artists_theme() {
       ],
     ],
   ];
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * Sending an email to admin for failing reports from API subscriber.
+ */
+function spotify_artists_mail($key, &$message, $params): void {
+  if ($key == 'reports_message') {
+    $message['subject'] = t('Report error @event_type', ['@event_type' => $params]);
+    $message['body'][]  = t('The event failed to be saved.  time:@time', ['@time' => '555']);
+  }
 }

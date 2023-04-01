@@ -8,12 +8,12 @@ use Drupal\Core\Datetime\DateFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- *
+ * A report page for API events.
  */
 class SpotifyArtistsReport extends ControllerBase {
 
   /**
-   *
+   * Constructor to inject dependencies.
    */
   public function __construct(private readonly Connection $connection, private readonly DateFormatter $dateFormatter) {
   }
@@ -29,7 +29,7 @@ class SpotifyArtistsReport extends ControllerBase {
   }
 
   /**
-   *
+   * Query data from database and display it in a table for each date.
    */
   public function reportPage(): array {
     $data = NULL;
@@ -40,29 +40,41 @@ class SpotifyArtistsReport extends ControllerBase {
       $this->getLogger('spotify.artists')->info($e->getMessage());
     }
 
-    $header = [
-      'date' => t('Date & Time'),
-      'Type' => t('Type'),
-    ];
-
-    $rows = [];
+    $events = [];
     if ($data) {
-      foreach ($data as $row) {
+      foreach ($data as $event) {
         // Formatting date and time.
-        $row->date_time = $this->dateFormatter->format($row->date_time);
+        $date = $this->dateFormatter->format($event->date_time, 'html_date');
+        $time = $this->dateFormatter->format($event->date_time, 'html_time');
         // Formatting type.
-        $row->type = ucfirst(str_replace("_", " ", $row->type));
-        $rows[] = ['data' => (array) $row];
+        $type = ucfirst(str_replace("_", " ", $event->type));
+        $events[] = ['date' => $date, 'time' => $time, 'type' => $type];
       }
     }
-
-
-    return [
-      '#caption' => $this->t('Reports for every API request in order to monitor unnecessary requests'),
-      '#type' => 'table',
-      '#header' => $header,
-      '#rows' => $rows,
+    // Group events by date.
+    $groupByDate = [];
+    foreach ($events as $group) {
+      $groupByDate[$group['date']][] = [$group['time'], $group['type']];
+    }
+    // Create a table for each date.
+    $build = [];
+    $header = [
+      'date' => t('Time'),
+      'Type' => t('Type'),
     ];
+    foreach ($groupByDate as $index => $eventsInDate) {
+      $build[$index] = [
+        '#type' => 'details',
+        '#title' => $this->t('Reports for @date', ['@date' => $index]),
+      ];
+      $build[$index][$index] = [
+        '#type' => 'table',
+        '#header' => $header,
+        '#rows' => $eventsInDate,
+
+      ];
+    }
+    return $build;
   }
 
 }

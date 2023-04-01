@@ -13,6 +13,6 @@ services:
     arguments: [ '@keyvalue.expirable', '@lock', '@current_user', '@request_stack', 3600 ]
   spotify.subscriber:
     class: Drupal\spotify_artists\EventSubscriber\APISubscriber
-    arguments: ['@current_user', '@database', '@datetime.time']
+    arguments: ['@current_user', '@database', '@datetime.time', '@plugin.manager.mail', '@config.factory', '@language_manager']
     tags:
       - { name: event_subscriber }
