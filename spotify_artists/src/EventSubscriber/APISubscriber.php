@@ -3,16 +3,9 @@
 namespace Drupal\spotify_artists\EventSubscriber;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Logger\LoggerChannelTrait;
-use Drupal\Core\Mail\MailManagerInterface;
-use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\spotify_artists\Event\APIEvents;
 use Drupal\spotify_artists\Event\APIReportEvent;
-use Drupal\Core\Messenger\MessengerTrait;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\spotify_artists\Service\SpotifyArtistsRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -20,19 +13,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class APISubscriber implements EventSubscriberInterface {
 
-  use StringTranslationTrait;
-  use MessengerTrait;
-  use LoggerChannelTrait;
-
   /**
    * Inject Account Proxy service.
    */
-  public function __construct(private readonly AccountProxyInterface $accountProxy,
-                              private readonly Connection $connection,
+  public function __construct(private readonly SpotifyArtistsRepository $repository,
                               private readonly TimeInterface $time,
-                              private readonly MailManagerInterface $mailManager,
-                              private readonly ConfigFactoryInterface $configFactory,
-                              private readonly LanguageManagerInterface $languageManager
   ) {
   }
 
@@ -40,7 +25,7 @@ class APISubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents(): array {
-    $events[APIEvents::NEW_REPORT][] = ['saveToDb'];
+    $events[APIEvents::NEW_REPORT][] = ['save'];
     return $events;
   }
 
@@ -50,7 +35,7 @@ class APISubscriber implements EventSubscriberInterface {
    * @param \Drupal\spotify_artists\Event\APIReportEvent $event
    *   The event object containing types.
    */
-  public function saveToDb(APIReportEvent $event) {
+  public function save(APIReportEvent $event) {
     // Get current time.
     $dateTime = $this->time->getCurrentTime();
     // Save to database.
@@ -58,20 +43,7 @@ class APISubscriber implements EventSubscriberInterface {
       'date_time' => $dateTime,
       'type' => $event->getApiType(),
     ];
-    try {
-      $this->connection->insert('spotify_artists_reports')->fields($entry)->execute();
-    }
-    catch (\Exception $e) {
-      $this->getLogger('spotify.artists')->info($e->getMessage());
-      $this->messenger->addError($this->t('Cannot write to report, spotify_artists_reports table does not exist, try reinstalling the module'));
-      $this->mailManager->mail(
-        'spotify_artists',
-        'reports_message',
-        $this->configFactory->get('system.site')->get('mail'),
-        $this->languageManager->getDefaultLanguage()->getId(),
-        str_replace("_", " ", $event->getApiType()),
-      );
-    }
+    $this->repository->insert($entry);
   }
 
 }
