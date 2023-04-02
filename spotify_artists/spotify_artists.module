@@ -25,6 +25,7 @@ function spotify_artists_theme(): array {
       'variables' => [
         'artist' => NULL,
         'existing_artists' => NULL,
+        'top_tracks' => NULL,
       ],
     ],
   ];
@@ -37,7 +38,7 @@ function spotify_artists_theme(): array {
  */
 function spotify_artists_mail($key, &$message, $params): void {
   if ($key == 'reports_message') {
-    $message['subject'] = t('Report error @event_type', ['@event_type' => $params]);
-    $message['body'][]  = t('The event failed to be saved.  time:@time', ['@time' => '555']);
+    $message['subject'] = t('Report API error @event_type');
+    $message['body'][]  = t('The event failed to be saved.  Error: @error', ['@error' => $params]);
   }
 }

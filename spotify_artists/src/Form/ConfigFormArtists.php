@@ -203,7 +203,7 @@ class ConfigFormArtists extends ConfigFormBase {
     $search_results = [];
     $artists = $this->searchArtistsService->searchArtists($query);
     if ($artists['status'] == 200) {
-      $search_results = $artists['response']->items;
+      $search_results = $artists['artists']->items;
     }
 
     if ($search_results) {

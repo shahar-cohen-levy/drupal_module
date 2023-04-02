@@ -1,4 +1,5 @@
 <div>
+
   {% if artist %}
     <h1> {{artist.name}} </h1>
     <div>
@@ -6,6 +7,7 @@
         src="{{ artist.images[0].url }}"
         height="{{ artist.images[0].height }}"
         width="{{ artist.images[0].width }}"
+        alt="{{artist.name}} "
       >
     </div>
     <ul>
@@ -13,6 +15,14 @@
         <li>{{ genre }}</li>
       {% endfor %}
     </ul>
+      {% if top_tracks %}
+      <h3>{{ 'Top tracks'|t }}</h3>
+          <ol>
+              {% for track in top_tracks %}
+                  <li>{{ track.name }}</li>
+              {% endfor %}
+          </ol>
+    {% endif %}
 {% else %}
 
   {%  if (drupal_block('spotify_artists_block')['content']['#artists'] == NULL) %}

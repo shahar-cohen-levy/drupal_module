@@ -3,8 +3,8 @@
 namespace Drupal\spotify_artists\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatter;
+use Drupal\spotify_artists\Service\SpotifyArtistsRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -15,7 +15,9 @@ class SpotifyArtistsReport extends ControllerBase {
   /**
    * Constructor to inject dependencies.
    */
-  public function __construct(private readonly Connection $connection, private readonly DateFormatter $dateFormatter) {
+  public function __construct(private readonly DateFormatter $dateFormatter,
+                              private readonly SpotifyArtistsRepository $repository,
+  ) {
   }
 
   /**
@@ -23,8 +25,8 @@ class SpotifyArtistsReport extends ControllerBase {
    */
   public static function create(ContainerInterface $container): SpotifyArtistsReport|static {
     return new static(
-      $container->get('database'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('spotify.repository')
     );
   }
 
@@ -32,22 +34,21 @@ class SpotifyArtistsReport extends ControllerBase {
    * Query data from database and display it in a table for each date.
    */
   public function reportPage(): array {
-    $data = NULL;
-    try {
-      $data = $this->connection->query('SELECT date_time,type FROM spotify_artists_reports ORDER BY id DESC')->fetchAll();
-    }
-    catch (\Exception $e) {
-      $this->getLogger('spotify.artists')->info($e->getMessage());
-    }
-
+    $data = $this->repository->queryAllReports();
     $events = [];
     if ($data) {
       foreach ($data as $event) {
         // Formatting date and time.
         $date = $this->dateFormatter->format($event->date_time, 'html_date');
         $time = $this->dateFormatter->format($event->date_time, 'html_time');
-        // Formatting type.
-        $type = ucfirst(str_replace("_", " ", $event->type));
+        $type = ucfirst(
+          preg_replace(
+            ['/\/v1\/|\/api\/|artists\/[A-Za-z0-9]+/',
+              '/[\/?]/',
+              '/-/',
+            ],
+            ['', '', ' '],
+            $event->type));
         $events[] = ['date' => $date, 'time' => $time, 'type' => $type];
       }
     }
