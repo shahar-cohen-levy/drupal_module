@@ -51,7 +51,7 @@ class SpotifyArtistsRepository {
   /**
    * Insert data to 'spotify_artists_reports' table.
    */
-  public function insert(array $entry) {
+  public function insert(array $entry): int|string|null {
     try {
       $return_value = $this->connection->insert('spotify_artists_reports')
         ->fields($entry)
@@ -69,6 +69,25 @@ class SpotifyArtistsRepository {
       );
     }
     return $return_value ?? NULL;
+  }
+
+  /**
+   * A custom function to query all reports and order them.
+   */
+  public function queryAllReports():array|null {
+
+    try {
+      return $this->connection
+        ->select('spotify_artists_reports')
+        ->fields('spotify_artists_reports', ['date_time', 'type'])
+        ->orderBy('date_time', 'DESC')
+        ->execute()
+        ->fetchAll();
+    }
+    catch (\Exception $e) {
+      $this->getLogger('spotify.artists')->info($e->getMessage());
+      return NULL;
+    }
   }
 
 }
