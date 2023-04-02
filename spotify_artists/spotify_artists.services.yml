@@ -1,16 +1,27 @@
 services:
   spotify.api:
     class: Drupal\spotify_artists\Service\SpotifyApiService
-    arguments: ['@config.factory', '@spotify.tempstore.private', '@event_dispatcher']
+    arguments: ['@config.factory',
+                '@spotify.tempstore.private',
+                '@event_dispatcher']
   spotify.artists:
     class: Drupal\spotify_artists\Service\ArtistsService
-    arguments: [ '@spotify.api', '@config.factory', '@spotify.tempstore.private', '@event_dispatcher' ]
+    arguments: [ '@spotify.api',
+                 '@config.factory',
+                 '@spotify.tempstore.private',
+                 '@event_dispatcher' ]
   spotify.top.tracks:
     class: Drupal\spotify_artists\Service\TopTracksService
-    arguments: [ '@spotify.api', '@config.factory', '@spotify.tempstore.private', '@event_dispatcher' ]
+    arguments: [ '@spotify.api',
+                 '@config.factory',
+                 '@spotify.tempstore.private',
+                 '@event_dispatcher' ]
   spotify.search:
     class: Drupal\spotify_artists\Service\SearchArtistsService
-    arguments: [ '@spotify.api' ,'@event_dispatcher']
+    arguments: [ '@spotify.api',
+                 '@config.factory',
+                 '@spotify.tempstore.private',
+                 '@event_dispatcher' ]
   spotify.repository:
     class: Drupal\spotify_artists\Service\SpotifyArtistsRepository
     arguments: [ '@database' ,
@@ -21,9 +32,14 @@ services:
                  '@language_manager',]
   spotify.tempstore.private:
     class: Drupal\Core\TempStore\PrivateTempStoreFactory
-    arguments: [ '@keyvalue.expirable', '@lock', '@current_user', '@request_stack', 3600 ]
+    arguments: [ '@keyvalue.expirable',
+                 '@lock',
+                 '@current_user',
+                 '@request_stack',
+                 3600 ]
   spotify.subscriber:
     class: Drupal\spotify_artists\EventSubscriber\APISubscriber
-    arguments: [ '@spotify.repository', '@datetime.time' ]
+    arguments: [ '@spotify.repository',
+                 '@datetime.time' ]
     tags:
       - { name: event_subscriber }
