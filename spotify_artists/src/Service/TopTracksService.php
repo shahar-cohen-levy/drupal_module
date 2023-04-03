@@ -16,7 +16,8 @@ class TopTracksService {
     return $this->request(
       "/v1/artists/$artistId/top-tracks",
       ['id' => $artistId, 'market' => 'GB'],
-      'tracks'
+      'tracks',
+      'Tracks'
     );
   }
 

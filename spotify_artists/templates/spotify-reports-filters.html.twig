@@ -1,0 +1,20 @@
+<div>
+    <div>
+        {% if filters is not empty %}
+            {{ 'Filter results by'|t }}:
+        {% endif %}
+        {% for filter in filters %}
+            <a href="{{ filter['#url'] }}"> {{ filter['#title'] }}</a>
+        {% endfor %}
+    </div>
+
+    {% if active_filter %}
+        <div>
+            {{ 'Results filtered by'|t }} <strong>{{ active_filter|t }}</strong>
+        </div>
+    {% endif %}
+
+    {% if filters is empty %}
+        <a href="{{ reset_url }}"> {{ 'Reset'|t }}</a>
+    {% endif %}
+</div>

@@ -74,14 +74,19 @@ class SpotifyArtistsRepository {
   /**
    * A custom function to query all reports and order them.
    */
-  public function queryAllReports():array|null {
+  public function queryAllReports($type = NULL): ?array {
 
     try {
-      return $this->connection
-        ->select('spotify_artists_reports')
-        ->fields('spotify_artists_reports', ['date_time', 'type'])
-        ->orderBy('date_time', 'DESC')
-        ->execute()
+      $reports = $this->connection
+        ->select('spotify_artists_reports', 'reports')
+        ->fields('reports', ['date_time', 'type']);
+      if ($type) {
+        $reports->addField('reports', 'date_time');
+        $reports->addField('reports', 'type');
+        $reports->condition('reports.type', $type);
+      }
+
+      return $reports->execute()
         ->fetchAll();
     }
     catch (\Exception $e) {

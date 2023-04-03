@@ -35,7 +35,11 @@ class ArtistsService {
       }
     }
     // Else make a request from the API.
-    return $this->request('/v1/artists/', ['ids' => $artists_list], 'artists');
+    return $this->request(
+      '/v1/artists/',
+      ['ids' => $artists_list],
+      'artists',
+      'Artists');
   }
 
 }

@@ -64,7 +64,7 @@ trait SpotifyApiTrait {
    * @return array
    *   returns array with artist data.
    */
-  private function request(string $uri, array $query, string $responseName) :array {
+  private function request(string $uri, array $query, string $responseName, string $reportName) :array {
     try {
       $client = new Client([
         'base_uri' => 'https://api.spotify.com',
@@ -82,7 +82,7 @@ trait SpotifyApiTrait {
       $body    = json_decode($request->getBody());
       $status  = json_decode($request->getStatusCode());
       // Dispatch event for reports.
-      $event = new APIReportEvent($uri);
+      $event = new APIReportEvent($reportName);
       $this->dispatcher->dispatch($event, APIEvents::NEW_REPORT);
       // Save response to store.
       $this->tempStore->set(

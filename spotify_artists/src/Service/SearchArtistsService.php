@@ -23,7 +23,8 @@ class SearchArtistsService {
     return $this->request(
       '/v1/search?',
       ['q' => $query, 'type' => 'artist'],
-      'artists'
+      'artists',
+      'Search'
     );
 
   }
