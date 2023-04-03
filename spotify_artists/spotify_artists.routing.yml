@@ -5,9 +5,10 @@ spotify_artists.content:
   requirements:
     _user_is_logged_in: 'TRUE'
 spotify_artists.report:
-  path: '/admin/config/content/api_report'
+  path: '/admin/config/content/api_report/{error_type}'
   defaults:
     _controller: '\Drupal\spotify_artists\Controller\SpotifyArtistsReport::reportPage'
+    error_type: ''
   requirements:
     _permission: 'access spotify config'
 spotify_artists.form_api:

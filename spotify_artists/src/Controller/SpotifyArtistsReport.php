@@ -2,12 +2,10 @@
 
 namespace Drupal\spotify_artists\Controller;
 
-use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\spotify_artists\Service\SpotifyArtistsRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * A report page for API events.
@@ -19,7 +17,6 @@ class SpotifyArtistsReport extends ControllerBase {
    */
   public function __construct(private readonly DateFormatter $dateFormatter,
                               private readonly SpotifyArtistsRepository $repository,
-                              private readonly RequestStack $request,
   ) {
   }
 
@@ -30,16 +27,14 @@ class SpotifyArtistsReport extends ControllerBase {
     return new static(
       $container->get('date.formatter'),
       $container->get('spotify.repository'),
-      $container->get('request_stack')
     );
   }
 
   /**
    * Query data from database and display it in a table for each date.
    */
-  public function reportPage(): array {
-    $error_type_selected = $this->request->getCurrentRequest()->get('type');
-    $data = $this->repository->queryAllReports($error_type_selected);
+  public function reportPage($error_type): array {
+    $data = $this->repository->queryAllReports($error_type);
     $events = [];
     $error_types = [];
     if ($data) {
@@ -67,20 +62,10 @@ class SpotifyArtistsReport extends ControllerBase {
       'Type' => t('Type'),
     ];
 
-    $filters = [];
-    foreach ($unique_error_types as $type) {
-      if ($error_type_selected !== $type) {
-        $filters[$type] = [
-          '#title' => $type,
-          '#url' => Url::fromRoute('spotify_artists.report', ['type' => $type])->toString(),
-        ];
-      }
-    }
     $build['filters'] = [
       '#theme' => 'spotify_reports_filters',
-      '#reset_url' => Url::fromRoute('spotify_artists.report')->toString(),
-      '#filters' => $filters,
-      '#active_filter' => $error_type_selected,
+      '#filters' => $unique_error_types,
+      '#active_filter' => $error_type,
     ];
     foreach ($groupByDate as $index => $eventsInDate) {
       $build[$index] = [

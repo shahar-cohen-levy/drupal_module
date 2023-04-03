@@ -1,20 +1,21 @@
 <div>
     <div>
-        {% if filters is not empty %}
-            {{ 'Filter results by'|t }}:
+        {% if not active_filter %}
+                {{ 'Filter results by'|t }}:
+            {% for filter in filters %}
+                <a href="{{ path('spotify_artists.report', { error_type:filter}) }}">
+                    {{ filter|capitalize }}
+                </a>
+            {% endfor %}
         {% endif %}
-        {% for filter in filters %}
-            <a href="{{ filter['#url'] }}"> {{ filter['#title'] }}</a>
-        {% endfor %}
     </div>
 
     {% if active_filter %}
         <div>
             {{ 'Results filtered by'|t }} <strong>{{ active_filter|t }}</strong>
+            <br>
+            <a href="{{ path('spotify_artists.report') }}"> {{ 'Reset'|t }}</a>
         </div>
     {% endif %}
 
-    {% if filters is empty %}
-        <a href="{{ reset_url }}"> {{ 'Reset'|t }}</a>
-    {% endif %}
 </div>
