@@ -39,7 +39,7 @@ class ArtistsService {
       '/v1/artists/',
       ['ids' => $artists_list],
       'artists',
-      'Artists');
+      'artists');
   }
 
 }

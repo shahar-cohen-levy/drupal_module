@@ -105,7 +105,7 @@ class SpotifyApiService {
       $status = json_decode($res->getStatusCode());
 
       // Dispatch an event for reports section.
-      $event = new APIReportEvent($verify ? 'Token-verify' : 'Token');
+      $event = new APIReportEvent($verify ? 'token-verify' : 'token');
       $this->event_dispatcher->dispatch($event, APIEvents::NEW_REPORT);
 
       $this->saveTokenToSession([

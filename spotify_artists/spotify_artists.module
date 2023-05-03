@@ -31,7 +31,6 @@ function spotify_artists_theme(): array {
     'spotify_reports_filters' => [
       'variables' => [
         'filters' => NULL,
-        'reset_url' => NULL,
         'active_filter' => NULL,
       ],
     ],

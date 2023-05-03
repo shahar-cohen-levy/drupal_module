@@ -24,7 +24,7 @@ class SearchArtistsService {
       '/v1/search?',
       ['q' => $query, 'type' => 'artist'],
       'artists',
-      'Search'
+      'search'
     );
 
   }

@@ -1,6 +1,6 @@
 <div>
     <div>
-        {% if not active_filter %}
+        {% if filters and not active_filter  %}
                 {{ 'Filter results by'|t }}:
             {% for filter in filters %}
                 <a href="{{ path('spotify_artists.report', { error_type:filter}) }}">

@@ -3,7 +3,7 @@
 namespace Drupal\spotify_artists\Service;
 
 /**
- * Service to top tracks.
+ * Service for top tracks.
  */
 class TopTracksService {
 
@@ -17,7 +17,7 @@ class TopTracksService {
       "/v1/artists/$artistId/top-tracks",
       ['id' => $artistId, 'market' => 'GB'],
       'tracks',
-      'Tracks'
+      'tracks'
     );
   }
 
