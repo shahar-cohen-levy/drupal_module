@@ -12,7 +12,7 @@ class ArtistsService {
   /**
    * Function to get artists.
    */
-  public function getArtists(array|string $artistsIds = NULL): array {
+  public function getArtists(array|string $artistsIds = NULL): array|int {
     // If artists ids is not passed to service get it from config.
     if (!isset($artistsIds)) {
       $artistsIds = $this->configFactory->get('spotify_artists.artists')->get('ids');

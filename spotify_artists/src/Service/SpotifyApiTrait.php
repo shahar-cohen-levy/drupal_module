@@ -64,7 +64,7 @@ trait SpotifyApiTrait {
    * @return array
    *   returns array with artist data.
    */
-  private function request(string $uri, array $query, string $responseName, string $reportName) :array {
+  private function request(string $uri, array $query, string $responseName, string $reportName) :array|int {
     try {
       $client = new Client([
         'base_uri' => 'https://api.spotify.com',
@@ -99,10 +99,10 @@ trait SpotifyApiTrait {
 
     }
     catch (GuzzleException $e) {
-      return $e->getCode();
+      return ["status" => $e->getCode()];
     }
     catch (TempStoreException $e) {
-      return $e->getCode();
+      return ["status" => $e->getCode()];
     }
   }
 
